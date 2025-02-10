@@ -1,5 +1,6 @@
 package views;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import io.github.main.Main;
 
@@ -17,7 +18,9 @@ public class MainScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // TODO Auto-generated method stub
+        //clear the screen
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
     }
 
     @Override
