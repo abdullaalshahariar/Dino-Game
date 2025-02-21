@@ -47,11 +47,12 @@ public class MainScreen implements Screen {
         stage.addActor(backgroundLayers);
 
         //creating ground layer
-        ActorGround ground = new ActorGround(1);
+        float speed=200;
+        ActorGround ground = new ActorGround(speed);
         stage.addActor(ground);
 
         //creatuning cactus actor
-        ActorCactus cactus = new ActorCactus(ground);
+        ActorCactus cactus  = new ActorCactus(ground);
         stage.addActor(cactus);
     }
 
