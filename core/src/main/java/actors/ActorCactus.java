@@ -9,39 +9,42 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class ActorCactus extends Actor {
     private Texture cactusTexture;
     private ActorGround ground;
-
+    private float speed;
     public ActorCactus(ActorGround ground){
         this.ground = ground;
+        this.speed = ground.speed;
 
         this.cactusTexture = new Texture(Gdx.files.internal("images/cactus_actor.png"));
         this.setSize(this.cactusTexture.getWidth()*5, this.cactusTexture.getHeight()*5);
 
-        //setting position relative to ground actor
-        // but needed to be updated every frame
-        this.setPosition(ground.getX(), ground.getY()+ground.getHeight()-5);
+        //ground er speed ar cactus er speed same hobe
+        // but every frame ei speed update korte hobe because
+        // ground er speed change hote pare
+        this.setPosition(Gdx.graphics.getWidth(), ground.getY() + ground.getHeight() - 5);
 
     }
 
-    @Override
-    protected void positionChanged(){
-        updatePosition();
-        super.positionChanged();
-    }
 
     @Override
     public void act(float delta){
         super.act(delta);
-        updatePosition();
+
+        //every frame e speed sync korteci ground er sathe
+        speed = ground.speed;
+        //speed negative because left e move kortece
+        moveBy(-speed*delta, 0);
+        //jodi cactus viewport er baire chole jai, tahole
+        // again screen er right side e chole asbe
+        if(getX() < -getWidth()){
+            setX(Gdx.graphics.getWidth());
+        }
+
+        //System.out.println("Cactus X: " + getX() + ", Ground X: " + ground.getX() + ", Speed: " + speed + ", Delta: " + delta);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha){
-        //System.out.println(ground.getX());
         batch.draw(this.cactusTexture, this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    }
-
-    private void updatePosition(){
-        this.setPosition(ground.getX(), ground.getY()+ground.getHeight()-5);
     }
 
     //manually disposing the cactusTexture
