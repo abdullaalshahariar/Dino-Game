@@ -13,15 +13,19 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.main.Main;
 
+import java.util.Random;
+
 public class MainScreen implements Screen {
     private Main parent;
     private Stage stage;
     private OrthographicCamera camera;
     private ActorParallaxLayer backgroundLayers;
+    private Random random;
 
 
     public MainScreen(Main main){
         parent = main;
+        random = new Random();
     }
 
     public void LoadParallaxBackground(Game game){
@@ -51,21 +55,30 @@ public class MainScreen implements Screen {
         ActorGround ground = new ActorGround(speed);
         stage.addActor(ground);
 
-        //4 ta cactus add korteci
-        ActorCactus cactus1  = new ActorCactus(ground);
-        ActorCactus cactus2 = new ActorCactus(ground);
-        ActorCactus cactus3 = new ActorCactus(ground);
-        ActorCactus cactus4 = new ActorCactus(ground);
+        //3 ta cactus add korteci
+        ActorCactus cactus1  = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor1.png")), 7);
+        ActorCactus cactus2 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor2.png")), 7);
+        ActorCactus cactus3 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor3.png")));
         //cactus gula ke stage e add kore dicci
         stage.addActor(cactus1);
         stage.addActor(cactus2);
         stage.addActor(cactus3);
-        stage.addActor(cactus4);
+
+        //before settig the distance
+        //kicu fixed offset distance define kore dicci
+        int[] distance = {200, 300, 400, 500, 600};
+
         //positon gula set kore dite hobe jate overlap na hoy
-        cactus1.setPosition(100, ground.getHeight()); // Example starting position
-        cactus2.setPosition(300, ground.getHeight()); // Offset by 200 pixels
-        cactus3.setPosition(500, ground.getHeight());
-        cactus4.setPosition(700, ground.getHeight());
+        cactus1.setPosition(selectRandom(distance), ground.getHeight()); // Example starting position
+        cactus2.setPosition(selectRandom(distance), ground.getHeight()); // Offset by 200 pixels
+        cactus3.setPosition(selectRandom(distance), ground.getHeight());
+
+
+
+    }
+
+    private int selectRandom(int[] distances){
+        return distances[random.nextInt(distances.length)];
     }
 
     @Override

@@ -5,23 +5,32 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import java.util.Random;
+
 
 public class ActorCactus extends Actor {
     private Texture cactusTexture;
     private ActorGround ground;
     private float speed;
-    public ActorCactus(ActorGround ground){
+    private int size;
+    private int[] distance = {200,300,400,500,600};
+    private Random random;
+
+    public ActorCactus(ActorGround ground, Texture cactusTexture){
+        this(ground, cactusTexture, 5);
+    }
+
+    public ActorCactus(ActorGround ground, Texture cactusTexture, int size){
+        this.size = size;
         this.ground = ground;
         this.speed = ground.speed;
 
-        this.cactusTexture = new Texture(Gdx.files.internal("images/cactus_actor.png"));
-        this.setSize(this.cactusTexture.getWidth()*5, this.cactusTexture.getHeight()*5);
+        this.cactusTexture = cactusTexture;
+        this.setSize(this.cactusTexture.getWidth()*size, this.cactusTexture.getHeight()*size);
 
-        //ground er speed ar cactus er speed same hobe
-        // but every frame ei speed update korte hobe because
-        // ground er speed change hote pare
-        this.setPosition(Gdx.graphics.getWidth(), ground.getY() + ground.getHeight() - 5);
+        this.setPosition(Gdx.graphics.getWidth(), ground.getY() + ground.getHeight() - 50);
 
+        this.random = new Random();
     }
 
 
@@ -36,10 +45,14 @@ public class ActorCactus extends Actor {
         //jodi cactus viewport er baire chole jai, tahole
         // again screen er right side e chole asbe
         if(getX() < -getWidth()){
-            setX(Gdx.graphics.getWidth());
+            setX(Gdx.graphics.getWidth() + selectRandom());
         }
 
         //System.out.println("Cactus X: " + getX() + ", Ground X: " + ground.getX() + ", Speed: " + speed + ", Delta: " + delta);
+    }
+
+    int selectRandom(){
+        return distance[random.nextInt(distance.length)];
     }
 
     @Override
