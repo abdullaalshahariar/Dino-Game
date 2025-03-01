@@ -1,6 +1,7 @@
 package views;
 
 import actors.ActorCactus;
+import actors.ActorDino;
 import actors.ActorGround;
 import actors.ActorParallaxLayer;
 import com.badlogic.gdx.Game;
@@ -69,9 +70,16 @@ public class MainScreen implements Screen {
         int[] distance = {200, 300, 400, 500, 600};
 
         //positon gula set kore dite hobe jate overlap na hoy
-        cactus1.setPosition(selectRandom(distance), ground.getHeight()); // Example starting position
-        cactus2.setPosition(selectRandom(distance), ground.getHeight()); // Offset by 200 pixels
-        cactus3.setPosition(selectRandom(distance), ground.getHeight());
+        cactus1.setPosition(selectRandom(distance), ground.getHeight()-10); // Example starting position
+        cactus2.setPosition(selectRandom(distance), ground.getHeight()-10); // Offset by 200 pixels
+        cactus3.setPosition(selectRandom(distance), ground.getHeight()-10);
+
+        //dinosure add korteci
+        ActorDino dino = new ActorDino();
+        //dino er position set kore dicci
+        dino.setPosition(ground.getX(), ground.getHeight()-10);
+        //stage e add kore dicci
+        stage.addActor(dino);
 
 
 

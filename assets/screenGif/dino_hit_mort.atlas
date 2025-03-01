@@ -1,0 +1,9 @@
+dino_hit_mort.png
+size:64,32
+repeat:none
+dino_hit_mort0
+bounds:24,2,17,18
+dino_hit_mort1
+bounds:43,3,15,17
+dino_hit_mort2
+bounds:2,3,20,17

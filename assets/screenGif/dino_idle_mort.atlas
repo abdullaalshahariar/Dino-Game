@@ -1,0 +1,9 @@
+dino_idle_mort.png
+size:64,32
+repeat:none
+dino_idle_mort0
+bounds:2,2,15,17
+dino_idle_mort1
+bounds:36,2,15,17
+dino_idle_mort2
+bounds:19,2,15,17

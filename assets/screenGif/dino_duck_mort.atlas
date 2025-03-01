@@ -1,0 +1,17 @@
+dino_duck_mort.png
+size:32,128
+repeat:none
+dino_duck_mort0
+bounds:2,102,18,15
+dino_duck_mort1
+bounds:2,34,18,15
+dino_duck_mort2
+bounds:2,68,18,15
+dino_duck_mort3
+bounds:2,2,18,14
+dino_duck_mort4
+bounds:2,51,18,15
+dino_duck_mort5
+bounds:2,85,18,15
+dino_duck_mort6
+bounds:2,18,18,14
