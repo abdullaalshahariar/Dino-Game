@@ -75,9 +75,9 @@ public class MainScreen implements Screen {
         cactus3.setPosition(selectRandom(distance), ground.getHeight()-10);
 
         //dinosure add korteci
-        ActorDino dino = new ActorDino();
+        ActorDino dino = new ActorDino(ground);
         //dino er position set kore dicci
-        dino.setPosition(ground.getX(), ground.getHeight()-10);
+        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
         //stage e add kore dicci
         stage.addActor(dino);
 

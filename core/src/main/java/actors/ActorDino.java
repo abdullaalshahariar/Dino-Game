@@ -13,10 +13,13 @@ public class ActorDino extends Actor {
     private Animation<TextureRegion> runningAnimation, duckingAnimation, idleAnimation, hitAnimation;
     float elapsedTime = 0;
     private Boolean RUNNING = false, DUCKING=false, IDLE=false, HIT=false;
-    private final float jumpStrength = 500, gravity = -10;
+    private final float jumpStrength = 400, upGravity = -400, downGravity = -1600;
     private float jumpVelocity = 0;
+    ActorGround ground;
 
-    public ActorDino(){
+    public ActorDino(ActorGround ground){
+        this.ground = ground;
+
         // loading all the textures for dino animation
         // jump korle idle animation cholbe
         TextureAtlas runningAtlas = new TextureAtlas(Gdx.files.internal("screenGif/dino_running_mort.atlas"));
@@ -37,6 +40,7 @@ public class ActorDino extends Actor {
         // na dile default size zero hobe, screen e kicu dekha jabe na
         TextureRegion tmpRegion = runningAtlas.getRegions().first();
         setSize(tmpRegion.getRegionWidth()*7, tmpRegion.getRegionHeight()*7);
+        setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
 
     }
 
@@ -51,24 +55,32 @@ public class ActorDino extends Actor {
 
     private void handleJumping(float delta){
         //cheaking if key is pressed
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && getY()<=0){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && getY()<=ground.getHeight()-10){
             jumpVelocity = jumpStrength;
             IDLE = true;
             RUNNING = false;
         }
 
         //gravity apply korteci
-        jumpVelocity += gravity*delta;
+        if(jumpVelocity>0){
+            jumpVelocity += upGravity*delta; //upoer e jacce, weak gravity
+        }else if(jumpVelocity<=0){
+            jumpVelocity += downGravity*delta; //niche jacce, strong gravity
+        }
+        //jumpVelocity += upGravity*delta;
         moveBy(0, jumpVelocity*delta);
+
+        System.out.println(jumpVelocity);
 
 
         //jodi ground er upore chole jai, tahole ground er upore thakbe
-        if(getY()<=0){
-            setY(0);
+        if(getY()<ground.getHeight()-10){
+            setY(ground.getHeight()-10);
             jumpVelocity = 0;
             IDLE = false;
             RUNNING = true;
         }
+
     }
 
     @Override
