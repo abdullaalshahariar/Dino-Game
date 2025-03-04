@@ -9,13 +9,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class ActorDino extends Actor {
+public class ActorDino extends Actor implements Collidable{
     private Animation<TextureRegion> runningAnimation, duckingAnimation, idleAnimation, hitAnimation;
     float elapsedTime = 0;
     private Boolean RUNNING = false, DUCKING=false, IDLE=false, HIT=false;
     private final float jumpStrength = 400, upGravity = -400, downGravity = -1600;
     private float jumpVelocity = 0;
-    ActorGround ground;
+    public ActorGround ground;
+    public Rectangle boundingBox;
 
     public ActorDino(ActorGround ground){
         this.ground = ground;
@@ -42,6 +43,13 @@ public class ActorDino extends Actor {
         setSize(tmpRegion.getRegionWidth()*7, tmpRegion.getRegionHeight()*7);
         setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
 
+        //setting up a rectangular bounding box for collision detection
+        boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
+
+    }
+
+    public Rectangle getBoundingBox(){
+        return boundingBox;
     }
 
     @Override
@@ -50,6 +58,7 @@ public class ActorDino extends Actor {
         elapsedTime += delta;
 
         handleJumping(delta);
+        boundingBox.setPosition(getX(), getY());
 
     }
 

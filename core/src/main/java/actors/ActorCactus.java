@@ -3,18 +3,20 @@ package actors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.util.Random;
 
 
-public class ActorCactus extends Actor {
+public class ActorCactus extends Actor implements Collidable{
     private Texture cactusTexture;
     private ActorGround ground;
     private float speed;
     private int size;
     private int[] distance = {200,300,400,500,600};
     private Random random;
+    public Rectangle boundingBox;
 
     public ActorCactus(ActorGround ground, Texture cactusTexture){
         this(ground, cactusTexture, 5);
@@ -29,8 +31,12 @@ public class ActorCactus extends Actor {
         this.setSize(this.cactusTexture.getWidth()*size, this.cactusTexture.getHeight()*size);
 
         this.setPosition(Gdx.graphics.getWidth(), ground.getY() + ground.getHeight() - 50);
-
+        this.boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
         this.random = new Random();
+    }
+
+    public Rectangle getBoundingBox(){
+        return boundingBox;
     }
 
 
@@ -47,6 +53,9 @@ public class ActorCactus extends Actor {
         if(getX() < -getWidth()){
             setX(Gdx.graphics.getWidth() + selectRandom());
         }
+
+        //changing bounding box position
+        boundingBox.setPosition(getX(), getY());
 
         //System.out.println("Cactus X: " + getX() + ", Ground X: " + ground.getX() + ", Speed: " + speed + ", Delta: " + delta);
     }
