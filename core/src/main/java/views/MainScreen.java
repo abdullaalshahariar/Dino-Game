@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -30,10 +31,16 @@ public class MainScreen implements Screen {
     SpriteBatch batch;
     BitmapFont font;
 
+    //only debugging er jonno bounding shape ta ke draw kore dekteci
+    private ShapeRenderer shapeRenderer;
+
 
     public MainScreen(Main main){
         parent = main;
         random = new Random();
+
+        //onlu debugging er jonno bounding shape ta ke draw kore dekteci
+        shapeRenderer = new ShapeRenderer();
     }
 
     public void LoadParallaxBackground(Game game){
@@ -110,7 +117,11 @@ public class MainScreen implements Screen {
 
     private void checkCollision(){
         for(Collidable obstacle: obstacles){
-            if(dino.getBoundingBox().overlaps(obstacle.getBoundingBox())){
+//            if(dino.getBoundingBox().overlaps(obstacle.getBoundingBox())){
+//                gameOver = true;
+//                break;
+//            }
+            if(dino.getBoundingCircle().overlaps(obstacle.getBoundingCircle())){
                 gameOver = true;
                 break;
             }
@@ -130,6 +141,15 @@ public class MainScreen implements Screen {
         }
 
         stage.draw();
+
+        //debugging er jonno bounding shape ta ke draw kore dekteci
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(0,1,0,1);
+        shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
+        for(Collidable obstacle: obstacles){
+            shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
+        }
+        shapeRenderer.end();
 
         if(gameOver){
             batch.begin();

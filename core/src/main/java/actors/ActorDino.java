@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -16,7 +17,8 @@ public class ActorDino extends Actor implements Collidable{
     private final float jumpStrength = 400, upGravity = -400, downGravity = -1600;
     private float jumpVelocity = 0;
     public ActorGround ground;
-    public Rectangle boundingBox;
+   // public Rectangle boundingBox;
+    public Circle boundingCircle;
 
     public ActorDino(ActorGround ground){
         this.ground = ground;
@@ -44,12 +46,18 @@ public class ActorDino extends Actor implements Collidable{
         setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
 
         //setting up a rectangular bounding box for collision detection
-        boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        //boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        //setting up a bounding crcle to make collision detection look more natural
+        this.boundingCircle = new Circle(getX()+getWidth()/2f, getY()+getHeight()/2f, Math.min(getHeight(), getWidth())/2f);
 
     }
 
-    public Rectangle getBoundingBox(){
-        return boundingBox;
+//    public Rectangle getBoundingBox(){
+//        return boundingBox;
+//    }
+
+    public Circle getBoundingCircle(){
+        return boundingCircle;
     }
 
     @Override
@@ -58,7 +66,8 @@ public class ActorDino extends Actor implements Collidable{
         elapsedTime += delta;
 
         handleJumping(delta);
-        boundingBox.setPosition(getX(), getY());
+        //boundingBox.setPosition(getX(), getY());
+        boundingCircle.setPosition(getX() + getWidth()/2f, getY()+getHeight()/2f);
 
     }
 
