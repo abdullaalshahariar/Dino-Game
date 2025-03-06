@@ -3,45 +3,70 @@ package actors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import java.util.Random;
 
-public class ActorCactus extends Actor {
+
+public class ActorCactus extends Actor implements Collidable{
     private Texture cactusTexture;
     private ActorGround ground;
+    private float speed;
+    private int size;
+    private int[] distance = {200,300,400,500,600};
+    private Random random;
+    public Rectangle boundingBox;
 
-    public ActorCactus(ActorGround ground){
+    public ActorCactus(ActorGround ground, Texture cactusTexture){
+        this(ground, cactusTexture, 5);
+    }
+
+    public ActorCactus(ActorGround ground, Texture cactusTexture, int size){
+        this.size = size;
         this.ground = ground;
+        this.speed = ground.speed;
 
-        this.cactusTexture = new Texture(Gdx.files.internal("images/cactus_actor.png"));
-        this.setSize(this.cactusTexture.getWidth()*5, this.cactusTexture.getHeight()*5);
+        this.cactusTexture = cactusTexture;
+        this.setSize(this.cactusTexture.getWidth()*size, this.cactusTexture.getHeight()*size);
 
-        //setting position relative to ground actor
-        // but needed to be updated every frame
-        this.setPosition(ground.getX(), ground.getY()+ground.getHeight()-5);
-
+        this.setPosition(Gdx.graphics.getWidth(), ground.getY() + ground.getHeight() - 50);
+        this.boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
+        this.random = new Random();
     }
 
-    @Override
-    protected void positionChanged(){
-        updatePosition();
-        super.positionChanged();
+    public Rectangle getBoundingBox(){
+        return boundingBox;
     }
+
 
     @Override
     public void act(float delta){
         super.act(delta);
-        updatePosition();
+
+        //every frame e speed sync korteci ground er sathe
+        speed = ground.speed;
+        //speed negative because left e move kortece
+        moveBy(-speed*delta, 0);
+        //jodi cactus viewport er baire chole jai, tahole
+        // again screen er right side e chole asbe
+        if(getX() < -getWidth()){
+            setX(Gdx.graphics.getWidth() + selectRandom());
+        }
+
+        //changing bounding box position
+        boundingBox.setPosition(getX(), getY());
+
+        //System.out.println("Cactus X: " + getX() + ", Ground X: " + ground.getX() + ", Speed: " + speed + ", Delta: " + delta);
+    }
+
+    int selectRandom(){
+        return distance[random.nextInt(distance.length)];
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha){
-        //System.out.println(ground.getX());
         batch.draw(this.cactusTexture, this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    }
-
-    private void updatePosition(){
-        this.setPosition(ground.getX(), ground.getY()+ground.getHeight()-5);
     }
 
     //manually disposing the cactusTexture

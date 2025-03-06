@@ -7,7 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class ActorGround extends Actor {
     private Texture groundTexture;
-    private float scrollX; private float speed;
+    private float scrollX;
+    public float speed;
 
     public ActorGround(float groundSpeed) {
         groundTexture = new Texture(Gdx.files.internal("images/ground.png"));
