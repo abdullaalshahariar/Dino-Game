@@ -34,16 +34,17 @@ public class ActorCactus extends Actor implements Collidable{
 
         this.setPosition(Gdx.graphics.getWidth(), ground.getY() + ground.getHeight() - 50);
         //this.boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
-        this.boundingCircle = new Circle(getX()+getWidth()/2f, getY()+getHeight()/2f, Math.min(getHeight(), getWidth())/2f);
+        this.boundingCircle = new Circle(getX()+getWidth()/2f, getY()+getHeight()/2f, (Math.min(getHeight(), getWidth())/2f)*0.9f);
         this.random = new Random();
     }
 
-//    public Rectangle getBoundingBox(){
-//        return boundingBox;
-//    }
-
+    //from collidable interface
     public Circle getBoundingCircle(){
         return boundingCircle;
+    }
+    public void setPositionCollidable(float x, float y){
+        this.setPosition(x, y);
+        boundingCircle.setPosition(x+getWidth()/2f, y+getHeight()/2f);
     }
 
 

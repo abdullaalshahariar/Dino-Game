@@ -7,17 +7,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class ActorDino extends Actor implements Collidable{
     private Animation<TextureRegion> runningAnimation, duckingAnimation, idleAnimation, hitAnimation;
     float elapsedTime = 0;
-    private Boolean RUNNING = false, DUCKING=false, IDLE=false, HIT=false;
+    public Boolean RUNNING = false, DUCKING=false, IDLE=false, HIT=false;
     private final float jumpStrength = 400, upGravity = -400, downGravity = -1600;
     private float jumpVelocity = 0;
     public ActorGround ground;
-   // public Rectangle boundingBox;
     public Circle boundingCircle;
 
     public ActorDino(ActorGround ground){
@@ -45,20 +43,22 @@ public class ActorDino extends Actor implements Collidable{
         setSize(tmpRegion.getRegionWidth()*7, tmpRegion.getRegionHeight()*7);
         setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
 
-        //setting up a rectangular bounding box for collision detection
-        //boundingBox = new Rectangle(getX(), getY(), getWidth(), getHeight());
         //setting up a bounding crcle to make collision detection look more natural
-        this.boundingCircle = new Circle(getX()+getWidth()/2f, getY()+getHeight()/2f, Math.min(getHeight(), getWidth())/2f);
+        this.boundingCircle = new Circle(getX()+getWidth()/2f, getY()+getHeight()/2f, (Math.min(getHeight(), getWidth())/2f)*0.9f);
 
     }
 
-//    public Rectangle getBoundingBox(){
-//        return boundingBox;
-//    }
-
+    //from collidable interface
+    @Override
     public Circle getBoundingCircle(){
         return boundingCircle;
     }
+    @Override
+    public void setPositionCollidable(float x, float y){
+        this.setPosition(x, y);
+        boundingCircle.setPosition(x+getWidth()/2f, y+getHeight()/2f);
+    }
+
 
     @Override
     public void act(float delta){
@@ -88,7 +88,7 @@ public class ActorDino extends Actor implements Collidable{
         //jumpVelocity += upGravity*delta;
         moveBy(0, jumpVelocity*delta);
 
-        System.out.println(jumpVelocity);
+        //System.out.println(jumpVelocity);
 
 
         //jodi ground er upore chole jai, tahole ground er upore thakbe

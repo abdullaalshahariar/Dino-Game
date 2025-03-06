@@ -3,6 +3,7 @@ package views;
 import actors.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,6 +28,7 @@ public class MainScreen implements Screen {
     private Boolean gameOver = false;
 
     private ActorDino dino;
+    private ActorGround ground;
 
     SpriteBatch batch;
     BitmapFont font;
@@ -41,10 +43,6 @@ public class MainScreen implements Screen {
 
         //onlu debugging er jonno bounding shape ta ke draw kore dekteci
         shapeRenderer = new ShapeRenderer();
-    }
-
-    public void LoadParallaxBackground(Game game){
-
     }
 
     @Override
@@ -67,7 +65,7 @@ public class MainScreen implements Screen {
 
         //creating ground layer
         float speed=200;
-        ActorGround ground = new ActorGround(speed);
+        ground = new ActorGround(speed);
         stage.addActor(ground);
 
         //collision detection er jonno sob actor ke
@@ -89,7 +87,7 @@ public class MainScreen implements Screen {
 
         //before settig the distance
         //kicu fixed offset distance define kore dicci
-        int[] distance = {200, 300, 400, 500, 600};
+        int[] distance = {600, 800, 1200, 1500, 1900, 2500};
 
         //positon gula set kore dite hobe jate overlap na hoy
         cactus1.setPosition(selectRandom(distance)+1000, ground.getHeight()-10); // Example starting position
@@ -111,16 +109,21 @@ public class MainScreen implements Screen {
 
     }
 
+    private void restartGame(){
+        int[] distance = {600, 800, 1200, 1500, 1900, 2500};
+        gameOver = false;
+        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
+        for(Collidable obstacle: obstacles){
+            obstacle.setPositionCollidable(selectRandom(distance)+1000, ground.getHeight()-10);
+        }
+    }
+
     private int selectRandom(int[] distances){
         return distances[random.nextInt(distances.length)];
     }
 
     private void checkCollision(){
         for(Collidable obstacle: obstacles){
-//            if(dino.getBoundingBox().overlaps(obstacle.getBoundingBox())){
-//                gameOver = true;
-//                break;
-//            }
             if(dino.getBoundingCircle().overlaps(obstacle.getBoundingCircle())){
                 gameOver = true;
                 break;
@@ -138,6 +141,9 @@ public class MainScreen implements Screen {
             //update the stage and draw
             stage.act(Gdx.graphics.getDeltaTime());
             checkCollision();
+        }
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            restartGame();
         }
 
         stage.draw();
