@@ -12,11 +12,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class ActorDino extends Actor implements Collidable{
     private Animation<TextureRegion> runningAnimation, duckingAnimation, idleAnimation, hitAnimation;
     float elapsedTime = 0;
-    public Boolean RUNNING = false, DUCKING=false, IDLE=false, HIT=false;
+    public Boolean RUNNING = false, DUCKING=false, IDLE=false, HIT=false, DASHING=false;
     private final float jumpStrength = 400, upGravity = -400, downGravity = -1600;
     private float jumpVelocity = 0;
     public ActorGround ground;
     public Circle boundingCircle;
+
+    private Boolean canDash = false;
+    private final float  dashSpeed = 500;
+    private float dashTimeRenmaining = 0;
+    private final float dashDuration = 0.2f;
 
     public ActorDino(ActorGround ground){
         this.ground = ground;
@@ -40,7 +45,7 @@ public class ActorDino extends Actor implements Collidable{
         //size set kore dewa lagbe
         // na dile default size zero hobe, screen e kicu dekha jabe na
         TextureRegion tmpRegion = runningAtlas.getRegions().first();
-        setSize(tmpRegion.getRegionWidth()*7, tmpRegion.getRegionHeight()*7);
+        setSize(tmpRegion.getRegionWidth()*8, tmpRegion.getRegionHeight()*8);
         setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
 
         //setting up a bounding crcle to make collision detection look more natural
@@ -66,7 +71,7 @@ public class ActorDino extends Actor implements Collidable{
         elapsedTime += delta;
 
         handleJumping(delta);
-        //boundingBox.setPosition(getX(), getY());
+        handleDashing(delta);
         boundingCircle.setPosition(getX() + getWidth()/2f, getY()+getHeight()/2f);
 
     }
@@ -77,6 +82,7 @@ public class ActorDino extends Actor implements Collidable{
             jumpVelocity = jumpStrength;
             IDLE = true;
             RUNNING = false;
+            canDash = true;
         }
 
         //gravity apply korteci
@@ -97,8 +103,32 @@ public class ActorDino extends Actor implements Collidable{
             jumpVelocity = 0;
             IDLE = false;
             RUNNING = true;
+
+            canDash = true; //jodi ground touch kore, jump korer por dash dewa jabe
+            DASHING = false;
         }
 
+    }
+
+    private void handleDashing(float delta){
+        //jodi right shift key press kora hoy and dino air e thake
+        // tahole dash dewa jabe
+        if(Gdx.input.isKeyJustPressed(Input.Keys.D) && getY()> ground.getHeight()-10 && canDash){
+            canDash = false;
+            DASHING = true;
+            dashTimeRenmaining = dashDuration; //dash start hoye geche
+            System.out.println("Shift Pressed");
+        }
+
+        //dash apply kora hocce
+        if(DASHING && dashTimeRenmaining > 0){
+            moveBy(dashSpeed*delta, 0);
+            dashTimeRenmaining -= delta;
+
+            if(dashTimeRenmaining<=0){
+                DASHING = false;
+            }
+        }
     }
 
     @Override

@@ -126,6 +126,10 @@ public class MainScreen implements Screen {
         for(Collidable obstacle: obstacles){
             if(dino.getBoundingCircle().overlaps(obstacle.getBoundingCircle())){
                 gameOver = true;
+                dino.HIT = true;
+                dino.IDLE = false;
+                dino.DUCKING = false;
+                dino.RUNNING = false;
                 break;
             }
         }
