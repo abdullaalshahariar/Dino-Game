@@ -26,6 +26,8 @@ public class ActorDino extends Actor implements Collidable{
     private Sound dashSound, boingSound1, boingSound2;
     private Boolean playingBoing1=true, playingBoing2=false;
 
+    private final float leftMoveSpeed = 200;
+
     public ActorDino(ActorGround ground){
         this.ground = ground;
 
@@ -80,6 +82,7 @@ public class ActorDino extends Actor implements Collidable{
 
         handleJumping(delta);
         handleDashing(delta);
+        handleMovingLeft(delta);
         boundingCircle.setPosition(getX() + getWidth()/2f, getY()+getHeight()/2f);
 
     }
@@ -141,12 +144,23 @@ public class ActorDino extends Actor implements Collidable{
         }
 
         //dash apply kora hocce
-        if(DASHING && dashTimeRenmaining > 0){
+        // jodi screen er edge e chole jai, tahole dash stop hoye jabe
+        if(DASHING && dashTimeRenmaining > 0 && getX()+getWidth() < Gdx.graphics.getWidth()-100){
             moveBy(dashSpeed*delta, 0);
             dashTimeRenmaining -= delta;
 
             if(dashTimeRenmaining<=0){
                 DASHING = false;
+            }
+        }
+    }
+
+    private void handleMovingLeft(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            float newX = getX() - leftMoveSpeed * delta;
+            // Prevent moving off left edge
+            if (newX > 0) { // Keep at least at x=0
+                moveBy(-leftMoveSpeed * delta, 0);
             }
         }
     }
