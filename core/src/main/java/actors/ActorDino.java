@@ -2,6 +2,7 @@ package actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -22,6 +23,8 @@ public class ActorDino extends Actor implements Collidable{
     private final float  dashSpeed = 500;
     private float dashTimeRenmaining = 0;
     private final float dashDuration = 0.2f;
+    private Sound dashSound, boingSound1, boingSound2;
+    private Boolean playingBoing1=true, playingBoing2=false;
 
     public ActorDino(ActorGround ground){
         this.ground = ground;
@@ -51,7 +54,12 @@ public class ActorDino extends Actor implements Collidable{
         //setting up a bounding crcle to make collision detection look more natural
         this.boundingCircle = new Circle(getX()+getWidth()/2f, getY()+getHeight()/2f, (Math.min(getHeight(), getWidth())/2f)*0.9f);
 
+        //dash sound
+        dashSound = Gdx.audio.newSound(Gdx.files.internal("sound/dash_sound.wav"));
+        boingSound1 = Gdx.audio.newSound(Gdx.files.internal("sound/boing-1.wav"));
+        boingSound2 = Gdx.audio.newSound(Gdx.files.internal("sound/boing-2.mp3"));
     }
+
 
     //from collidable interface
     @Override
@@ -83,6 +91,18 @@ public class ActorDino extends Actor implements Collidable{
             IDLE = true;
             RUNNING = false;
             canDash = true;
+
+            //sound play korteci
+            if(playingBoing1){
+                boingSound1.play(0.7f);
+                playingBoing1 = false;
+                playingBoing2 = true;
+            }
+            else{
+                boingSound2.play();
+                playingBoing1 = true;
+                playingBoing2 = false;
+            }
         }
 
         //gravity apply korteci
@@ -117,7 +137,7 @@ public class ActorDino extends Actor implements Collidable{
             canDash = false;
             DASHING = true;
             dashTimeRenmaining = dashDuration; //dash start hoye geche
-            System.out.println("Shift Pressed");
+            dashSound.play(0.7f);
         }
 
         //dash apply kora hocce
