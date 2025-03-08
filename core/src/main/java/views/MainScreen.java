@@ -3,11 +3,13 @@ package views;
 import actors.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,18 +28,21 @@ public class MainScreen implements Screen {
     private Boolean gameOver = false;
 
     private ActorDino dino;
+    private ActorGround ground;
 
     SpriteBatch batch;
     BitmapFont font;
+
+    //only debugging er jonno bounding shape ta ke draw kore dekteci
+    private ShapeRenderer shapeRenderer;
 
 
     public MainScreen(Main main){
         parent = main;
         random = new Random();
-    }
 
-    public void LoadParallaxBackground(Game game){
-
+        //onlu debugging er jonno bounding shape ta ke draw kore dekteci
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -60,7 +65,7 @@ public class MainScreen implements Screen {
 
         //creating ground layer
         float speed=200;
-        ActorGround ground = new ActorGround(speed);
+        ground = new ActorGround(speed);
         stage.addActor(ground);
 
         //collision detection er jonno sob actor ke
@@ -82,7 +87,7 @@ public class MainScreen implements Screen {
 
         //before settig the distance
         //kicu fixed offset distance define kore dicci
-        int[] distance = {200, 300, 400, 500, 600};
+        int[] distance = {600, 800, 1200, 1500, 1900, 2500};
 
         //positon gula set kore dite hobe jate overlap na hoy
         cactus1.setPosition(selectRandom(distance)+1000, ground.getHeight()-10); // Example starting position
@@ -104,14 +109,27 @@ public class MainScreen implements Screen {
 
     }
 
+    private void restartGame(){
+        int[] distance = {600, 800, 1200, 1500, 1900, 2500};
+        gameOver = false;
+        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
+        for(Collidable obstacle: obstacles){
+            obstacle.setPositionCollidable(selectRandom(distance)+1000, ground.getHeight()-10);
+        }
+    }
+
     private int selectRandom(int[] distances){
         return distances[random.nextInt(distances.length)];
     }
 
     private void checkCollision(){
         for(Collidable obstacle: obstacles){
-            if(dino.getBoundingBox().overlaps(obstacle.getBoundingBox())){
+            if(dino.getBoundingCircle().overlaps(obstacle.getBoundingCircle())){
                 gameOver = true;
+                dino.HIT = true;
+                dino.IDLE = false;
+                dino.DUCKING = false;
+                dino.RUNNING = false;
                 break;
             }
         }
@@ -128,8 +146,20 @@ public class MainScreen implements Screen {
             stage.act(Gdx.graphics.getDeltaTime());
             checkCollision();
         }
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            restartGame();
+        }
 
         stage.draw();
+
+        //debugging er jonno bounding shape ta ke draw kore dekteci
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(0,1,0,1);
+        shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
+        for(Collidable obstacle: obstacles){
+            shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
+        }
+        shapeRenderer.end();
 
         if(gameOver){
             batch.begin();
