@@ -2,6 +2,7 @@ package views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -11,6 +12,7 @@ import io.github.main.Main;
 public class MenuScreen implements Screen {
     private Main parent;
     private Stage stage;
+    private Music menuMusic;
 
     private class RunningDino extends Actor {
         private TextureAtlas atlas;
@@ -93,6 +95,10 @@ public class MenuScreen implements Screen {
         }
     }
 
+    public void stopMusic(){
+        menuMusic.stop();
+    }
+
     public MenuScreen(Main main){
         parent = main;
     }
@@ -115,6 +121,17 @@ public class MenuScreen implements Screen {
         //giving the stage keyboard focus so that it can handle inputs
         stage.setKeyboardFocus(play_button);
 
+
+        //music load koreci
+        //music credit
+//        Cipher by Kevin MacLeod http://incompetech.com
+//        Creative Commons — Attribution 4.0 International — CC BY 4.0
+//        Free Download / Stream: https://bit.ly/_cipher
+//        Music promoted by Audio Library https://youtu.be/XRdRGzd-Mcw
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sound/Cipher2.mp3"));
+        menuMusic.setLooping(true);
+        menuMusic.setVolume(0.7f);
+        menuMusic.play();
     }
 
 
@@ -152,5 +169,6 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        menuMusic.dispose();
     }
 }

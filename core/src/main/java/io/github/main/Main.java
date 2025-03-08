@@ -29,6 +29,7 @@ public class Main extends Game{
             case APPLICATION:
                 if(mainScreen == null) mainScreen = new MainScreen(this);
                 this.setScreen(mainScreen);
+                menuScreen.stopMusic();
                 break;
             case ENDGAME:
                 if(endScreen == null) endScreen = new EndScreen(this);

@@ -5,6 +5,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -32,6 +34,9 @@ public class MainScreen implements Screen {
 
     SpriteBatch batch;
     BitmapFont font;
+
+    private Music backgroundMusic;
+    private Sound deathSound;
 
     //only debugging er jonno bounding shape ta ke draw kore dekteci
     private ShapeRenderer shapeRenderer;
@@ -107,11 +112,25 @@ public class MainScreen implements Screen {
         font = new BitmapFont();
         font.getData().setScale(5);
 
+        //background music
+        //music credit
+//        Music by Bensound.com/free-music-for-videos
+//        License code: Q4SLNCGIFBHAQ45J
+
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sound/background_track.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.45f);
+        backgroundMusic.play();
+
+        //death sound
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("sound/Pacman-death-sound.mp3"));
+
     }
 
     private void restartGame(){
         int[] distance = {600, 800, 1200, 1500, 1900, 2500};
         gameOver = false;
+        backgroundMusic.play();
         dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
         for(Collidable obstacle: obstacles){
             obstacle.setPositionCollidable(selectRandom(distance)+1000, ground.getHeight()-10);
@@ -130,6 +149,10 @@ public class MainScreen implements Screen {
                 dino.IDLE = false;
                 dino.DUCKING = false;
                 dino.RUNNING = false;
+
+                backgroundMusic.stop();
+                deathSound.play(0.6f);
+
                 break;
             }
         }
