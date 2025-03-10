@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.main.Main;
 
 import java.util.Random;
+import com.badlogic.gdx.files.FileHandle;
 
 public class MainScreen implements Screen {
     private Main parent;
@@ -31,7 +32,8 @@ public class MainScreen implements Screen {
 
     private ActorDino dino;
     private ActorGround ground;
-
+    private int score; // Declare the score variable here
+    private int highestScore = 0;
     SpriteBatch batch;
     BitmapFont font;
 
@@ -49,7 +51,19 @@ public class MainScreen implements Screen {
         //onlu debugging er jonno bounding shape ta ke draw kore dekteci
         shapeRenderer = new ShapeRenderer();
     }
-
+    //Read the highest score from the file:
+    private int readHighestScore() {
+        FileHandle file = Gdx.files.internal("highest_score.txt");
+        if (file.exists()) {
+            String scoreString = file.readString();
+            try {
+                return Integer.parseInt(scoreString.trim());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
     @Override
     public void show() {
         //creating stage
@@ -124,19 +138,25 @@ public class MainScreen implements Screen {
 
         //death sound
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sound/Pacman-death-sound.mp3"));
-
+        highestScore = readHighestScore(); // Read the highest score when the game starts
     }
 
-    private void restartGame(){
+
+    private void restartGame() {
         int[] distance = {600, 800, 1200, 1500, 1900, 2500};
         gameOver = false;
         backgroundMusic.play();
-        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
-        for(Collidable obstacle: obstacles){
-            obstacle.setPositionCollidable(selectRandom(distance)+1000, ground.getHeight()-10);
+        dino.setPosition(Gdx.graphics.getWidth() / 4f, ground.getHeight() - 10);
+        for (Collidable obstacle : obstacles) {
+            obstacle.setPositionCollidable(selectRandom(distance) + 1000, ground.getHeight() - 10);
         }
+        score = 0; // Reset score
     }
 
+    private void writeHighestScore(int score) {
+        FileHandle file = Gdx.files.local("highest_score.txt");
+        file.writeString(String.valueOf(score), false);
+    }
     private int selectRandom(int[] distances){
         return distances[random.nextInt(distances.length)];
     }
@@ -153,47 +173,56 @@ public class MainScreen implements Screen {
                 backgroundMusic.stop();
                 deathSound.play(0.6f);
 
+                if (score > highestScore) {
+                    highestScore = score; // Update highest score
+                    writeHighestScore(highestScore);
+                }
                 break;
             }
+
         }
+
     }
+
 
     @Override
     public void render(float delta) {
-        //clear the screen
+        // clear the screen
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
 
-        if(!gameOver){
-            //update the stage and draw
+        if (!gameOver) {
+            // update the stage and draw
             stage.act(Gdx.graphics.getDeltaTime());
             checkCollision();
-        }
-        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            score += delta * 100; // Increment score based on time
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             restartGame();
         }
 
         stage.draw();
 
-        //debugging er jonno bounding shape ta ke draw kore dekteci
+        // debugging er jonno bounding shape ta ke draw kore dekteci
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(0,1,0,1);
+        shapeRenderer.setColor(0, 1, 0, 1);
         shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
-        for(Collidable obstacle: obstacles){
+        for (Collidable obstacle : obstacles) {
             shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
         }
         shapeRenderer.end();
 
-        if(gameOver){
+        if (gameOver) {
             batch.begin();
-            font.draw(batch, "Game Over", Gdx.graphics.getWidth()/2f-50, Gdx.graphics.getHeight()/2f);
+            font.draw(batch, "Game Over", Gdx.graphics.getWidth() / 2f - 50, Gdx.graphics.getHeight() / 2f);
             batch.end();
         }
 
-
-
+        // Draw the score and highest score
+        batch.begin();
+        font.draw(batch, "Score: " + score, 10, Gdx.graphics.getHeight() - 10);
+        font.draw(batch, "Highest Score: " + highestScore, 10, Gdx.graphics.getHeight() - 60); // Adjusted position
+        batch.end();
     }
-
     @Override
     public void resize(int width, int height) {
         // TODO Auto-generated method stub
@@ -220,3 +249,4 @@ public class MainScreen implements Screen {
         backgroundLayers.dispose();
     }
 }
+
