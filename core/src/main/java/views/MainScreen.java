@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -38,8 +39,12 @@ public class MainScreen implements Screen {
     private Music backgroundMusic;
     private Sound deathSound;
 
+    private int score;
+    private BitmapFont scoreFont;
+    private int highestScore;
+
     //only debugging er jonno bounding shape ta ke draw kore dekteci
-    private ShapeRenderer shapeRenderer;
+//    private ShapeRenderer shapeRenderer;
 
 
     public MainScreen(Main main){
@@ -47,7 +52,7 @@ public class MainScreen implements Screen {
         random = new Random();
 
         //onlu debugging er jonno bounding shape ta ke draw kore dekteci
-        shapeRenderer = new ShapeRenderer();
+//        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -73,22 +78,39 @@ public class MainScreen implements Screen {
         ground = new ActorGround(speed);
         stage.addActor(ground);
 
+
+        //dinosure add korteci
+        dino = new ActorDino(ground);
+        //dino er position set kore dicci
+        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
+        //stage e add kore dicci
+        stage.addActor(dino);
+
+
         //collision detection er jonno sob actor ke
         // ekta array te rakhbo
         obstacles = new Array<>();
 
         //3 ta cactus add korteci
         ActorCactus cactus1  = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor1.png")), 7);
-        ActorCactus cactus2 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor2.png")), 7);
+        ActorCactus cactus2 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/barrel.png")), 4);
         ActorCactus cactus3 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor3.png")));
+        //bird add korteci
+        ActorBird bird = new ActorBird(dino);
+
         //cactus gula ke stage e add kore dicci
         stage.addActor(cactus1);
         stage.addActor(cactus2);
         stage.addActor(cactus3);
+        //bird ke stage e add kore dicci
+        stage.addActor(bird);
+
         //cactus gula ke array te add kore dicci
         obstacles.add(cactus1);
         obstacles.add(cactus2);
         obstacles.add(cactus3);
+        //bird ke array te add kore dicci
+        obstacles.add(bird);
 
         //before settig the distance
         //kicu fixed offset distance define kore dicci
@@ -99,13 +121,7 @@ public class MainScreen implements Screen {
         cactus2.setPosition(selectRandom(distance)+1000, ground.getHeight()-10); // Offset by 200 pixels
         cactus3.setPosition(selectRandom(distance)+1000, ground.getHeight()-10);
 
-        //dinosure add korteci
-        dino = new ActorDino(ground);
-        //dino er position set kore dicci
-        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
-        //stage e add kore dicci
-        stage.addActor(dino);
-
+        bird.setPosition(selectRandom(distance), dino.getHeight() + 50);
 
         //text for "Game Over"
         batch = new SpriteBatch();
@@ -125,6 +141,34 @@ public class MainScreen implements Screen {
         //death sound
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sound/Pacman-death-sound.mp3"));
 
+
+        //tracking score
+        score = 0;
+        scoreFont = new BitmapFont();
+        scoreFont.getData().setScale(3);
+        //loading highest score
+        loadHighestScore();
+
+    }
+
+    private void loadHighestScore(){
+        try{
+            FileHandle file = Gdx.files.local("highestScore.txt");
+            if(file.exists()){
+                highestScore = Integer.parseInt(file.readString());
+            }
+        }catch (Exception e){
+            highestScore = 0;
+        }
+    }
+
+    private void saveHighestScore(){
+        try {
+            FileHandle file = Gdx.files.local("highestScore.txt");
+            file.writeString(Integer.toString(highestScore), false);
+        }catch (Exception e){
+            System.out.println("Error saving highest score");
+        }
     }
 
     private void restartGame(){
@@ -166,29 +210,39 @@ public class MainScreen implements Screen {
 
         if(!gameOver){
             //update the stage and draw
+            score += delta*100;
             stage.act(Gdx.graphics.getDeltaTime());
             checkCollision();
+
+            if(score > highestScore){
+                highestScore = (int) score;
+            }
         }
-        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.W)){
             restartGame();
         }
 
         stage.draw();
 
         //debugging er jonno bounding shape ta ke draw kore dekteci
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(0,1,0,1);
-        shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
-        for(Collidable obstacle: obstacles){
-            shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
-        }
-        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(0,1,0,1);
+//        shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
+//        for(Collidable obstacle: obstacles){
+//            shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
+//        }
+//        shapeRenderer.end();
 
+//        System.out.println(delta);
+        batch.begin();
+        scoreFont.draw(batch, "Score: " + (int)score, 50, Gdx.graphics.getHeight()-50);
+        scoreFont.draw(batch, "Highest Score: " + highestScore, Gdx.graphics.getWidth()-400, Gdx.graphics.getHeight()-50);
         if(gameOver){
-            batch.begin();
-            font.draw(batch, "Game Over", Gdx.graphics.getWidth()/2f-50, Gdx.graphics.getHeight()/2f);
-            batch.end();
+            font.draw(batch, "Game Over", Gdx.graphics.getWidth()/2f-200, Gdx.graphics.getHeight()/2f);
+            saveHighestScore();
+            score = 0;
         }
+        batch.end();
 
 
 
