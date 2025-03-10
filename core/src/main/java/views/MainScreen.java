@@ -39,7 +39,7 @@ public class MainScreen implements Screen {
     private Sound deathSound;
 
     //only debugging er jonno bounding shape ta ke draw kore dekteci
-    private ShapeRenderer shapeRenderer;
+//    private ShapeRenderer shapeRenderer;
 
 
     public MainScreen(Main main){
@@ -47,7 +47,7 @@ public class MainScreen implements Screen {
         random = new Random();
 
         //onlu debugging er jonno bounding shape ta ke draw kore dekteci
-        shapeRenderer = new ShapeRenderer();
+//        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -169,20 +169,20 @@ public class MainScreen implements Screen {
             stage.act(Gdx.graphics.getDeltaTime());
             checkCollision();
         }
-        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.W)){
             restartGame();
         }
 
         stage.draw();
 
         //debugging er jonno bounding shape ta ke draw kore dekteci
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(0,1,0,1);
-        shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
-        for(Collidable obstacle: obstacles){
-            shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
-        }
-        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(0,1,0,1);
+//        shapeRenderer.circle(dino.getBoundingCircle().x, dino.getBoundingCircle().y, dino.getBoundingCircle().radius);
+//        for(Collidable obstacle: obstacles){
+//            shapeRenderer.circle(obstacle.getBoundingCircle().x, obstacle.getBoundingCircle().y, obstacle.getBoundingCircle().radius);
+//        }
+//        shapeRenderer.end();
 
         if(gameOver){
             batch.begin();

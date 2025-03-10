@@ -89,7 +89,7 @@ public class ActorDino extends Actor implements Collidable{
 
     private void handleJumping(float delta){
         //cheaking if key is pressed
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && getY()<=ground.getHeight()-10){
+        if((Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.W)) && getY()<=ground.getHeight()-10){
             jumpVelocity = jumpStrength;
             IDLE = true;
             RUNNING = false;
