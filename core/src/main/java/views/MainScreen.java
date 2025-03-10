@@ -73,22 +73,39 @@ public class MainScreen implements Screen {
         ground = new ActorGround(speed);
         stage.addActor(ground);
 
+
+        //dinosure add korteci
+        dino = new ActorDino(ground);
+        //dino er position set kore dicci
+        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
+        //stage e add kore dicci
+        stage.addActor(dino);
+
+
         //collision detection er jonno sob actor ke
         // ekta array te rakhbo
         obstacles = new Array<>();
 
         //3 ta cactus add korteci
         ActorCactus cactus1  = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor1.png")), 7);
-        ActorCactus cactus2 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor2.png")), 7);
+        ActorCactus cactus2 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/barrel.png")), 4);
         ActorCactus cactus3 = new ActorCactus(ground, new Texture(Gdx.files.internal("images/cactus_actor3.png")));
+        //bird add korteci
+        ActorBird bird = new ActorBird(dino);
+
         //cactus gula ke stage e add kore dicci
         stage.addActor(cactus1);
         stage.addActor(cactus2);
         stage.addActor(cactus3);
+        //bird ke stage e add kore dicci
+        stage.addActor(bird);
+
         //cactus gula ke array te add kore dicci
         obstacles.add(cactus1);
         obstacles.add(cactus2);
         obstacles.add(cactus3);
+        //bird ke array te add kore dicci
+        obstacles.add(bird);
 
         //before settig the distance
         //kicu fixed offset distance define kore dicci
@@ -99,13 +116,7 @@ public class MainScreen implements Screen {
         cactus2.setPosition(selectRandom(distance)+1000, ground.getHeight()-10); // Offset by 200 pixels
         cactus3.setPosition(selectRandom(distance)+1000, ground.getHeight()-10);
 
-        //dinosure add korteci
-        dino = new ActorDino(ground);
-        //dino er position set kore dicci
-        dino.setPosition( Gdx.graphics.getWidth()/4f, ground.getHeight()-10);
-        //stage e add kore dicci
-        stage.addActor(dino);
-
+        bird.setPosition(selectRandom(distance), dino.getHeight() + 50);
 
         //text for "Game Over"
         batch = new SpriteBatch();
