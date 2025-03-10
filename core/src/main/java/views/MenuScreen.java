@@ -64,7 +64,7 @@ public class MenuScreen implements Screen {
 
         public Play_button(Main parent){
             //loading the button
-            texture = new Texture(Gdx.files.internal("images/Play_text_button.png"));
+            texture = new Texture(Gdx.files.internal("images/play_button.png"));
 
             //setting size keeping aspect ration same
             float aspectRatio = (float)texture.getWidth() / (float)texture.getHeight();
