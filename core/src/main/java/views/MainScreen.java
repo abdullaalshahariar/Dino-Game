@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -37,6 +38,10 @@ public class MainScreen implements Screen {
 
     private Music backgroundMusic;
     private Sound deathSound;
+
+    private int score;
+    private BitmapFont scoreFont;
+    private int highestScore;
 
     //only debugging er jonno bounding shape ta ke draw kore dekteci
 //    private ShapeRenderer shapeRenderer;
@@ -136,6 +141,34 @@ public class MainScreen implements Screen {
         //death sound
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sound/Pacman-death-sound.mp3"));
 
+
+        //tracking score
+        score = 0;
+        scoreFont = new BitmapFont();
+        scoreFont.getData().setScale(3);
+        //loading highest score
+        loadHighestScore();
+
+    }
+
+    private void loadHighestScore(){
+        try{
+            FileHandle file = Gdx.files.local("highestScore.txt");
+            if(file.exists()){
+                highestScore = Integer.parseInt(file.readString());
+            }
+        }catch (Exception e){
+            highestScore = 0;
+        }
+    }
+
+    private void saveHighestScore(){
+        try {
+            FileHandle file = Gdx.files.local("highestScore.txt");
+            file.writeString(Integer.toString(highestScore), false);
+        }catch (Exception e){
+            System.out.println("Error saving highest score");
+        }
     }
 
     private void restartGame(){
@@ -177,8 +210,13 @@ public class MainScreen implements Screen {
 
         if(!gameOver){
             //update the stage and draw
+            score += delta*100;
             stage.act(Gdx.graphics.getDeltaTime());
             checkCollision();
+
+            if(score > highestScore){
+                highestScore = (int) score;
+            }
         }
         else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.W)){
             restartGame();
@@ -195,11 +233,16 @@ public class MainScreen implements Screen {
 //        }
 //        shapeRenderer.end();
 
+//        System.out.println(delta);
+        batch.begin();
+        scoreFont.draw(batch, "Score: " + (int)score, 50, Gdx.graphics.getHeight()-50);
+        scoreFont.draw(batch, "Highest Score: " + highestScore, Gdx.graphics.getWidth()-400, Gdx.graphics.getHeight()-50);
         if(gameOver){
-            batch.begin();
-            font.draw(batch, "Game Over", Gdx.graphics.getWidth()/2f-50, Gdx.graphics.getHeight()/2f);
-            batch.end();
+            font.draw(batch, "Game Over", Gdx.graphics.getWidth()/2f-200, Gdx.graphics.getHeight()/2f);
+            saveHighestScore();
+            score = 0;
         }
+        batch.end();
 
 
 
